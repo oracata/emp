@@ -1,0 +1,1 @@
+yes,gz,watermark.png,gz,1,gz,1

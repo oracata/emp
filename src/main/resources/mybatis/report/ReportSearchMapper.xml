@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--dao直接引用-->
+<mapper namespace="ReportSearchMapper">
+
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+
+
+    <!--  -->
+    <select id="listSearchno"   resultType="Search" useCache="false">
+        select
+        rq,
+      wldwname,
+      search_key,
+      count(*) search_num
+        from report_b2b_searno_detail
+        where
+        rq  between  #{begin_date}  and   #{end_date}
+        group by rq,wldwname,search_key
+
+        order by search_num desc
+    </select>
+
+
+
+
+
+</mapper>

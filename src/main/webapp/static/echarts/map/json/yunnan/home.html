@@ -1,0 +1,380 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>XXX警系统</title>
+
+	
+	<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/echarts/4.1.0-release/echarts.min.js"></script>
+	
+ 
+ 
+</head>
+<body style="background-size: cover;">
+<div class="mune" style="color: #fff;">
+	<a href="jvascript:void(0)" id="sssj" onclick="loadMapDateTitle(this)" code=""></a>  <a href="jvascript:void(0)" id="ssdsz" onclick="loadMapDateTitle(this)" code=""></a>  <a href="jvascript:void(0)" id="ssfsx"></a>
+</div>
+<div id="back_btn" onclick="loadMapDateTitleBack(this)">返回</div>
+	<div>
+
+		<div id="main_map" style="float:left;width:100%;height:950px;"></div>
+	 
+	 
+
+	</div>
+
+</div>
+<script>
+ 
+
+	
+	function getUrlQuery(name) {
+		var pos, str, para, parastr;
+		var array = []
+		str = window.location.href;
+		if (str.split("?")[1] != undefined && str.split("=")[1] != undefined) {
+		  parastr = str.split("?")[1];
+		  parastr=decodeURIComponent(parastr);
+		  var arr = []
+		  arr = parastr.split("&");
+		  for (var i = 0; i < arr.length; i++) {
+			array[arr[i].split("=")[0]] = arr[i].split("=")[1];
+		  }
+	 
+		}
+		return array[name];//project为所要获取的参数
+    }
+ 
+ 
+ 	//当前登录用户单位代码
+ 	var myOrgCode = getUrlQuery("orgCode");
+	//当前登录用户单位名称
+ 	var myOrgName = getUrlQuery("orgName");
+	if(myOrgCode==null){
+		myOrgCode="100000";
+	}
+	if(myOrgName==null){
+		orgName="中国";
+	}
+	 
+	//地图
+    var myChartMap = echarts.init(document.getElementById('main_map'));
+	
+ 
+	//当前缓存对象
+	var mapDateObj = {};
+	//当前缓存散点对象
+	var mapPontObj = {};
+	
+	//当前缓存散点对象中心点
+	var mapCenterObj = {};
+	
+	//当前地图OrgCode
+	var thisOrgCode = ""; 
+	//当前地图OrgName
+	var thisOrgName = "";
+	
+ 	//地图标点颜色
+    var pointColor = ['#27d726', '#e992d6', '#eba67c', '#10dbdb', '#eaef5e', '#0ad9dc', '#ee7990'];
+	//地图区域的颜色
+	var cityColor = ['#ccc', '#9074c3','#4487d5', '#7e9e8e', '#51a2c2'];
+
+
+	/**
+	 *地图点击事件
+	 *
+	 **/
+	myChartMap.on('click', function (params) {
+		 	if(mapDateObj[thisOrgCode] && mapDateObj[thisOrgCode]!=null && mapDateObj[thisOrgCode].features){
+				var listFeatures = mapDateObj[thisOrgCode].features;
+				var loadOrgCode = "";
+				var loadOrgName = "";
+				if(listFeatures!=null && listFeatures.length > 0){
+						for (var i = 0; i < listFeatures.length; i++) {
+							var  properties = listFeatures[i].properties;
+							if(properties.name == params.name){
+								loadOrgCode = properties.adcode;
+								loadOrgName = params.name;
+							}
+						}
+				}
+				if(loadOrgCode!=""){
+					loadMapDate(loadOrgCode+"",loadOrgName);
+				}
+			}
+			
+	});
+	
+	/**
+	 *初始化
+	 *
+	 **/
+	jQuery(function() { 
+	 	$("#sssj").html(myOrgName);
+		$("#sssj").attr("code",myOrgCode);
+		thisOrgCode = myOrgCode;
+		thisOrgName = myOrgName;
+		initMap();
+	});	
+	
+	/**
+	 *初始化地图页面
+	 *
+	 **/
+	function initMap(){
+		loadMapDate(myOrgCode,myOrgName);
+	}
+
+	/**
+	 *标题点击事件
+	 *obj
+	 *
+	 ***/
+	function loadMapDateTitle(obj){
+		loadMapDate($(obj).attr("code"),$(obj).html());
+	}
+	/**
+	 *返回按钮点击事件
+	 *obj
+	 *
+	 ***/
+	function loadMapDateTitleBack(obj){
+		if(!($("#ssfsx").is(':hidden'))){
+			if(myOrgCode.substring(myOrgCode.length - 4,myOrgCode.length) == "0000"){
+				loadMapDateTitle($("#ssdsz"));
+			}else{
+				if($(obj).attr("code")!=null &&  $(obj).attr("code")!=""){
+					loadMapDateTitle($("#ssdsz"));
+				}else{
+					loadMapDateTitle($("#sssj")); 
+				}
+			}
+		}else if(!($("#ssdsz").is(':hidden'))){
+			loadMapDateTitle($("#sssj")); 
+		}
+	}
+	/**
+	 *加载地图页面数据
+	 *orgCode
+	 *orgName
+	 *
+	 ***/
+ 	function loadMapDate(orgCode,orgName){
+		myChartMap.showLoading(); 
+		if(mapDateObj[orgCode] && mapDateObj[orgCode]!=null &&  mapDateObj[orgCode]!= undefined){
+			registerMap(mapDateObj[orgCode],orgCode,orgName);
+		}else{
+			//  $.get('你的json地址'+orgCode+'.json?uuid=123456', function (geoJson) {
+			 $.get('https://geo.datav.aliyun.com/areas/bound/'+orgCode+'_full.json', function (geoJson) {
+
+				var listFeatures = geoJson.features;
+				var codeList = []; 
+				for (var i = 0; i < listFeatures.length; i++) {
+					var ent = listFeatures[i].properties;
+					try{
+						if(ent.centroid){
+							codeList.push({name: ent.name,value:[ent.centroid[0], ent.centroid[1], Math.floor(Math.random()*100+1)],code:ent.adcode});
+						}else{
+							codeList.push({name: ent.name,value:[ent.center[0], ent.center[1], Math.floor(Math.random()*100+1)],code:ent.adcode});
+						}
+					}catch(e){
+					}
+ 					
+					 
+				}
+				if(orgCode.substring(orgCode.length - 1,orgCode.length) != "0" || codeList.length==1){
+						mapPontObj[orgCode] = codeList;
+						mapDateObj[orgCode] = geoJson;
+						registerMap(geoJson,orgCode,orgName);
+				}else{
+					mapPontObj[orgCode] = codeList;
+					mapDateObj[orgCode] = geoJson;
+					registerMap(geoJson,orgCode,orgName);
+				}
+				
+			 
+			});
+			
+		}
+		
+	}
+	
+	
+	
+
+	function getMapCenter(orgCode){
+		var list = mapPontObj[orgCode];
+		if(list!=null && list.length>0){
+			for (var i = 0; i < list.length; i++) {
+				var tmpEnt = list[i];
+				mapCenterObj[tmpEnt.code] = [tmpEnt.value[0],tmpEnt.value[1]]
+			}
+		}
+		return mapCenterObj[orgCode]; 
+	}
+	
+
+
+	/**
+	 *重新加载地图页面
+	 *geoJson
+	 *orgCode
+	 *orgName
+	 *
+	 ***/
+	function registerMap(geoJson,orgCode,orgName){
+		
+		myChartMap.hideLoading();
+		echarts.registerMap('TTMAP', geoJson);
+		
+	
+		if(orgCode==myOrgCode){
+			$("#back_btn").hide();
+		}else{
+			$("#back_btn").show();
+		}
+		var orgNames = [];
+		var orgDatas = [];
+		var orgDataZps = [];
+		thisOrgCode = orgCode;
+		thisOrgName = orgName;
+		var pcsBool = false;
+		if(orgCode.substring(orgCode.length - 1,orgCode.length) != "0"){
+			$("#ssfsx").show();
+			$("#ssfsx").html(orgName);
+			pcsBool = true;
+		}else if(orgCode!=myOrgCode){
+			$("#ssdsz").show();
+			$("#ssdsz").html(orgName);
+			$("#ssdsz").attr("code",orgCode);
+			$("#ssfsx").hide();
+		}else{
+			$("#ssdsz").hide();
+			$("#ssfsx").hide();
+		}
+		
+		if(myOrgCode.substring(myOrgCode.length - 1,myOrgCode.length) != "0"){
+			$("#ssfsx").hide(); 
+		}
+		
+	
+
+		let optionMap = { // echarts 配置
+	    visualMap: {
+                show: false,
+                min: 1,
+                max: 99,
+                left: 'left',
+                top: 'bottom',
+                text: ['高', '低'],
+                calculable: true, 
+                seriesIndex: [1],
+                inRange: {
+                    color: cityColor
+                }
+            },
+			tooltip: {
+			    trigger: 'item',
+				formatter: function(t, n, i) {
+					if(t && t.data){
+						var data = t.data;
+						var dw = 10;
+						var sb = 50;
+						var hc = 12560;
+						var yj = 15;
+						if(data.value && data.value != undefined &&  data.value!=null && data.value.length>=2){
+							return  data.name +"<br/>" 
+							+"<em style='background-color:#27d726;'>&nbsp;&nbsp;&nbsp;&nbsp;</em> 数据1"+data.value[2]+"条<br/>"
+							+"<em style='background-color:#eba67c;'>&nbsp;&nbsp;&nbsp;&nbsp;</em> 数据2"+sb+"条<br/> "
+							+"<em style='background-color:#10dbdb;'>&nbsp;&nbsp;&nbsp;&nbsp;</em> 数据3"+hc+"条<br/> "
+							+"<em style='background-color:#ee7990;'>&nbsp;&nbsp;&nbsp;&nbsp;</em> 数据4"+yj+"条";
+							  
+						}else{ 
+							return data.name;
+						}
+					}
+					
+				}
+			},
+			geo: { // 地图配置
+				show: true,
+                map: 'TTMAP',
+                label: {
+                    normal: {
+                        show: false,
+                    }, 
+                    emphasis: {
+                        show: false
+                    }
+                },
+                zoom: 1.2,
+                roam: true,
+				center: getMapCenter(orgCode),
+				itemStyle: {
+					normal: { 
+						areaColor: cityColor[Math.floor(Math.random()*cityColor.length)]
+					}
+				},
+                emphasis: {
+                    itemStyle: {
+                        areaColor: '#0A69BB' // 经过颜色
+                    }
+                }
+				
+				
+			},
+			series: [
+					{ 	
+						// 散点配置
+						type: 'effectScatter',
+						coordinateSystem: 'geo',
+						data: mapPontObj[orgCode],
+						symbolSize: function (val) {
+							return pcsBool?10:20; 
+						},
+						symbolOffset: [0, 0],
+						zlevel: 10,
+						tooltip: {
+							show: false
+						},
+						itemStyle: {
+							normal: {
+								color: function (params) {
+									var num = pointColor.length;
+									return pointColor[params.dataIndex % num]
+								},
+							}
+						},
+						label: {
+							normal: {
+								formatter: function(t) {
+									var name = t.data.name;
+							
+									var ret = name   +"\n"+ t.data.value[2]
+									return ret;
+								},
+								position: "inside",
+								show: true,
+								color: "#444"
+							},
+							emphasis: {
+								show: true
+							}
+						} 
+					},
+					{
+						type: 'map',
+						geoIndex: 0,
+						data: mapPontObj[orgCode],
+					}
+			]
+		};
+		myChartMap.setOption(optionMap);
+
+	}
+</script>
+</body>
+</html>

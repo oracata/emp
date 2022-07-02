@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--dao直接引用-->
+<mapper namespace="ReportAreaMapper">
+
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+
+
+    <!--  -->
+    <select id="listReportDay"   resultType="ReportDay" useCache="false">
+      select
+        rq
+        ,shengfen
+        ,chengshi
+        ,quyufl
+        ,custom_num
+        ,round((login_pay_custom+login_nopay_custom)*1.00*100/custom_num,2) login_rate
+        ,login_pay_custom
+        ,login_nopay_custom
+        ,order_pay_custom
+        ,order_pay_price
+        ,order_nopay_custom
+        ,order_nopay_price
+        ,shopping_cart_custom
+        ,shopping_cart_price
+        from report_b2b_data
+        where
+        rq  between  #{begin_date}  and   #{end_date}
+
+
+        <if test="shengfen != null and shengfen != ''">
+            and shengfen   like  '%'+#{shengfen}+'%'
+        </if>
+        <if test="chengshi != null and chengshi != ''">
+            and chengshi   like  '%'+#{chengshi}+'%'
+        </if>
+        <if test="quyufl != null and quyufl != ''">
+            and quyufl   like  '%'+#{quyufl}+'%'
+        </if>
+      order by shengfen,chengshi,quyufl
+    </select>
+
+
+</mapper>

@@ -1,0 +1,61 @@
+
+/*iPhone6和iPhone8*/
+@media only screen
+and (device-width : 375px)
+and (device-height : 667px)
+and (-webkit-device-pixel-ratio : 2) and (orientation:portrait )  {
+
+    #main_map{height:420px!important;}
+    #table-responsive-width{width: calc(375px - (375px * 0.12))  ;}
+}
+
+/*iPhone6和iPhone8 横屏*/
+@media only screen
+and (device-width : 375px)
+and (device-height : 667px)
+and (-webkit-device-pixel-ratio : 2)  and (orientation:landscape) {
+
+    #table-responsive-width{width: calc(667px - (667px * 0.1))  ;}
+}
+
+
+
+/*iPhone6 Plus 和iPhone8 Plus*/
+@media only screen
+and (device-width : 414px)
+and (device-height : 736px)
+and (-webkit-device-pixel-ratio : 3)  and (orientation:portrait ) {
+
+    #main_map{height:520px!important;}
+    #table-responsive-width{width: calc(414px - (414px * 0.12))  ;}
+}
+
+
+/*iPhone6 Plus 和iPhone8 Plus*/
+@media only screen
+and (device-width : 414px)
+and (device-height : 736px)
+and (-webkit-device-pixel-ratio : 3)  and (orientation:landscape) {
+    #table-responsive-width{width: calc(736px - (736px * 0.1))  ;}
+}
+
+
+
+/*iPhoneX*/
+@media only screen
+and (device-width : 375px)
+and (device-height : 812px)
+and (-webkit-device-pixel-ratio : 3) and (orientation:portrait ) {
+
+    #main_map{height:620px!important;}
+    #table-responsive-width{width: calc(375px - (375px * 0.12))  ;}
+}
+
+
+/*iPhoneX*/
+@media only screen
+and (device-width : 375px)
+and (device-height : 812px)
+and (-webkit-device-pixel-ratio : 3) and (orientation:landscape) {
+    #table-responsive-width{width: calc(812px - (812px * 0.1))  ;}
+}
