@@ -10,7 +10,6 @@ import java.util.Properties;
 
 import javax.xml.bind.PropertyException;
 
-import org.apache.ibatis.builder.xml.dynamic.ForEachSqlNode;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.executor.ExecutorException;
 import org.apache.ibatis.executor.statement.BaseStatementHandler;
@@ -27,7 +26,7 @@ import org.apache.ibatis.plugin.Plugin;
 import org.apache.ibatis.plugin.Signature;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.property.PropertyTokenizer;
-
+import org.apache.ibatis.scripting.xmltags.ForEachSqlNode;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
@@ -36,28 +35,28 @@ import com.gz.entity.Page;
 import com.gz.util.ReflectHelper;
 import com.gz.util.Tools;
 /**
- * 
-* 类名称：PagePlugin.java
-* 类描述： 
-* @author GZ
-* 作者单位： 
-* 联系方式：qq357049881
-* 创建时间：2014年7月1日
-* @version 1.0
+ *
+ * 类名称：PagePlugin.java
+ * 类描述：
+ * @author GZ
+ * 作者单位：
+ * 联系方式：qq357049881
+ * 创建时间：2014年7月1日
+ * @version 1.0
  */
 @Intercepts({@Signature(type=StatementHandler.class,method="prepare",args={Connection.class})})
 public class PagePlugin implements Interceptor {
 
 	private static String dialect = "";	//数据库方言
 	private static String pageSqlId = ""; //mapper.xml中需要拦截的ID(正则匹配)
-	
+
 	public Object intercept(Invocation ivk) throws Throwable {
 		// TODO Auto-generated method stub
 		if(ivk.getTarget() instanceof RoutingStatementHandler){
 			RoutingStatementHandler statementHandler = (RoutingStatementHandler)ivk.getTarget();
 			BaseStatementHandler delegate = (BaseStatementHandler) ReflectHelper.getValueByFieldName(statementHandler, "delegate");
 			MappedStatement mappedStatement = (MappedStatement) ReflectHelper.getValueByFieldName(delegate, "mappedStatement");
-			
+
 			if(mappedStatement.getId().matches(pageSqlId)){ //拦截需要分页的SQL
 				BoundSql boundSql = delegate.getBoundSql();
 				Object parameterObject = boundSql.getParameterObject();//分页SQL<select>中parameterType属性对应的实体参数，即Mapper接口中执行分页方法的参数,该参数不得为空
@@ -81,8 +80,8 @@ public class PagePlugin implements Interceptor {
 					//System.out.println(count);
 					Page page = null;
 					if(parameterObject instanceof Page){	//参数就是Page实体
-						 page = (Page) parameterObject;
-						 page.setEntityOrField(true);	 
+						page = (Page) parameterObject;
+						page.setEntityOrField(true);
 						page.setTotalResult(count);
 					}else{	//参数为某个实体，该实体拥有Page属性
 						Field pageField = ReflectHelper.getFieldByFieldName(parameterObject,"page");
@@ -90,7 +89,7 @@ public class PagePlugin implements Interceptor {
 							page = (Page) ReflectHelper.getValueByFieldName(parameterObject,"page");
 							if(page==null)
 								page = new Page();
-							page.setEntityOrField(false); 
+							page.setEntityOrField(false);
 							page.setTotalResult(count);
 							ReflectHelper.setValueByFieldName(parameterObject,"page", page); //通过反射，对实体对象设置分页对象
 						}else{
@@ -105,7 +104,7 @@ public class PagePlugin implements Interceptor {
 		return ivk.proceed();
 	}
 
-	
+
 	/**
 	 * 对SQL参数(?)设值,参考org.apache.ibatis.executor.parameter.DefaultParameterHandler
 	 * @param ps
@@ -150,7 +149,7 @@ public class PagePlugin implements Interceptor {
 			}
 		}
 	}
-	
+
 	/**
 	 * 根据数据库方言，生成特定的分页sql
 	 * @param sql
@@ -164,7 +163,7 @@ public class PagePlugin implements Interceptor {
 			if("mysql".equals(dialect)){
 				pageSql.append(sql);
 
-			 pageSql.append(" limit "+page.getCurrentResult()+","+page.getShowCount());
+				pageSql.append(" limit "+page.getCurrentResult()+","+page.getShowCount());
 
 			}else if("oracle".equals(dialect)){
 				pageSql.append("select * from (select tmp_tb.*,ROWNUM row_id from (");
@@ -175,7 +174,7 @@ public class PagePlugin implements Interceptor {
 				pageSql.append(") where row_id>");
 				pageSql.append(page.getCurrentResult());
 			}else if("sqlserver".equals(dialect)){
-			//	pageSql.append("select * from (select tmp_tb.*,ROW_NUMBER() OVER() AS RowNumber from (");
+				//	pageSql.append("select * from (select tmp_tb.*,ROW_NUMBER() OVER() AS RowNumber from (");
 				pageSql.append(sql);
 				//pageSql.append(" ) tmp_tb ) a where   RowNumber BETWEEN "+page.getCurrentResult()+" and "+page.getShowCount());
 			}
@@ -185,7 +184,7 @@ public class PagePlugin implements Interceptor {
 			return sql;
 		}
 	}
-	
+
 	public Object plugin(Object arg0) {
 		// TODO Auto-generated method stub
 		return Plugin.wrap(arg0, this);
@@ -211,5 +210,5 @@ public class PagePlugin implements Interceptor {
 			}
 		}
 	}
-	
+
 }

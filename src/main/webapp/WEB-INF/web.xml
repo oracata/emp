@@ -62,14 +62,14 @@
 	</filter>
 
 	<!-- 监听测试方法  启动初始化方-->
-<!--
+
 	<listener>
 		<description>test listener</description>
 
 		<listener-class>com.gz.test.Test</listener-class>
 
 	</listener>
--->
+
 
 
 	<listener>

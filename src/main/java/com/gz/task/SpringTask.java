@@ -18,11 +18,11 @@ import javax.annotation.Resource;
 @Component
 public class SpringTask {
 
-    @Resource(name="logisticService")
+   // @Resource(name="logisticService")
    // private LogisticService logisticService;
 
     @Scheduled(cron = "0 */1 * * * ?")
-    public void ErpSendMsgTask() throws Exception {
+    public void ErpSendMsgTask() {
 
 
         Date date = new Date();
