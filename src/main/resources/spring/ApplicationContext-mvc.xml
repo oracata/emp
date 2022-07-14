@@ -24,6 +24,8 @@
 		<mvc:interceptor>
 			<mvc:mapping path="/**/**"/>
 
+			<!-- 不拦截/report/test1  -->
+			<mvc:exclude-mapping path="/report/test1"/>
 			<bean class="com.gz.interceptor.LoginHandlerInterceptor"/>
 		</mvc:interceptor>
 	</mvc:interceptors>
