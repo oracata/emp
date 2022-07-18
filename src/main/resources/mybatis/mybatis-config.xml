@@ -12,7 +12,7 @@
     </settings>
 	<!-- 别名 简化在mapper代码 就不用写一长串了 -->
 	<typeAliases>
-
+		<typeAlias type="com.gz.entity.gh.Cust" alias="Cust"/>
 		<typeAlias type="com.gz.entity.report.Search" alias="Search"/>
 		<typeAlias type="com.gz.entity.report.ReportDay" alias="ReportDay"/>
 		<typeAlias type="com.gz.entity.system.User" alias="User"/>

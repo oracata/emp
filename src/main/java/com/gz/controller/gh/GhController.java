@@ -1,7 +1,11 @@
 package com.gz.controller.gh;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.gz.controller.base.BaseController;
+import com.gz.entity.gh.Cust;
 import com.gz.entity.report.ReportDay;
+import com.gz.entity.report.Search;
 import com.gz.entity.system.User;
 import com.gz.service.gh.GhService;
 import com.gz.service.report.ReportService;
@@ -20,6 +24,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -27,43 +32,46 @@ import java.util.Map;
 public class GhController  extends BaseController {
     @Resource(name="ghService")
     private GhService ghService;
+    String menuUrl = "gh/listCust.do"; //菜单地址(权限用)
 
 
-//分配
-    @RequestMapping("/allot")
-    public ModelAndView getAllot(Model model, @ModelAttribute ReportDay v_reportday){
+    @RequestMapping("/cust")
+    public ModelAndView getSearch(Model model, @ModelAttribute Cust v_cust){
         //这个地方设置权限
 
         //初始化查询条件
-        if(v_reportday.getBegin_date()==null && v_reportday.getEnd_date()==null&&v_reportday.getShengfen()==null&&v_reportday.getChengshi()==null&&v_reportday.getQuyufl()==null) {
-            v_reportday.setBegin_date(DateUtil.getTimeDay(0));
-            v_reportday.setEnd_date(DateUtil.getTimeDay(0));
-            v_reportday.setShengfen("云南省");
-            v_reportday.setChengshi("");
-            v_reportday.setQuyufl(" 合计");
+        if(v_cust.getBegin_date()==null && v_cust.getEnd_date()==null) {
+            v_cust.setBegin_date(DateUtil.getTimeDay(0));
+            v_cust.setEnd_date(DateUtil.getTimeDay(0));
+
         }
         ModelAndView mav = new ModelAndView("gh/allot");
-        mav.addObject("reportday_con", v_reportday);
+        mav.addObject("search_con", v_cust);
 
         return mav;
     }
 
 
+//分配
+
+    @ResponseBody
+    @RequestMapping(value="/allot")
+    public DataGridView selectCust(Cust cust) throws Exception{
 
 
+        //     mv.addObject(Const.SESSION_QX,this.getHC());	//按钮权限
+        Page<Object> page= PageHelper.startPage(cust.getPageNumber(),cust.getPageSize());
+        List<Cust> data= ghService.listCust(cust);
+        return new DataGridView(page.getTotal(),data);
 
-
-    @RequestMapping(value="/get")
-    public ModelAndView selectGet(User user) throws Exception{
-        ModelAndView mv = this.getModelAndView();
-
-
-
-        mv.setViewName("gh/get");
-
-        return mv;
 
     }
+
+
+
+
+
+
 
     /* ===============================权限================================== */
     public Map<String, String> getHC(){
