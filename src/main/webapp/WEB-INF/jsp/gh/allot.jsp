@@ -146,15 +146,26 @@
 
 
                     <form>
+
+                        <div class="form-group">
+                        <div class="lable">
+                        <div class="input">
+                            <input type="hidden" name="id" id="id" value=""   style="width: 400px;height: 37px; float: left;"/>
+                        </div>
+                        </div>
+
+
+
+
                         <div class="form-group">
 
-
-                            <select class="form-control"  style="width:100%;height:100%" id="sel">
-                                <option>1
-                                <option>2
-                                <option>3
-                                <option>4
-                                <option>5
+                            <b>*</b>请选择客服:</div>
+                            <select class="form-control"  placeholder="请选择：" style="width:100%;height:100%" id="sel">
+                                <option value ="邹霞">邹霞</option>
+                                <option value ="唐荣">唐荣</option>
+                                <option value="刘崇敏">刘崇敏</option>
+                                <option value="段晓芳">段晓芳</option>
+                                <option value="陆慧敏">陆慧敏</option>
                             </select>
                         </div>
                     </form>
@@ -222,7 +233,24 @@
             //极为重要，缺失无法执行queryParams，传递page参数
             contentType : "application/x-www-form-urlencoded",
             dataType:"json",
+            singleSelect: true,//单行选择单行,设置为true将禁止多选
+            clickToSelect: true,//点击行时自动选择
+           // striped: true,//是否显示行间隔色
+            theadClasses: "bg-primary",
             columns: [
+                {
+                    checkbox: true
+                }, {
+                    title: '序号',
+                    field: '',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        var pageSize = $('#dataGrid').bootstrapTable('getOptions').pageSize;     //通过table的#id 得到每页多少条
+                        var pageNumber = $('#dataGrid').bootstrapTable('getOptions').pageNumber; //通过table的#id 得到当前第几页
+                        return pageSize * (pageNumber - 1) + index + 1;    // 返回每条的序号： 每页条数 *（当前页 - 1 ）+ 序号
+                    }
+                },
+
                 {
                     field: 'id',
                     title: '客户id',
@@ -293,7 +321,7 @@
                 }
                 ,{
                     field: '',
-                    title: "分配",
+                    title: "",
                     formatter:allotCust
                 }
 
@@ -346,25 +374,63 @@
 
         //领取 分配 按钮
         function allotCust(value, row, index) {
+
             if(1==2){
-            var htm = '<button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#getModal">领取' + '</button>';
+            var htm = '<button  class="btn btn-primary " data-toggle="modal" data-target="#getModal"    >领取' + '</button>';
             }else
             {
-                var htm = '<button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#allotModal">分配' + '</button>';
+                var htm = '<button    class="btn btn-primary"  data-toggle="modal"  data-target="#allotModal"     data-whatever="aaaaaa" >分配' + '</button>';
             }
             return htm;
         }
 
 
 //初始化时弹出框隐藏
-        $(function () { $('#myModal').modal('hide')});
+        /*
+               $(function () { $('#allotModal').modal('hide')});
 
- /*
-    $(function () { $('#myModal').on('hide.bs.modal', function () {
-        alert('嘿，我听说您喜欢模态框...');})
-    });
 
-*/
+
+           $(function () { $('#myModal').on('hide.bs.modal', function () {
+               alert('嘿，我听说您喜欢模态框...');})
+           });
+
+        */
+
+//向modal 中传值
+
+        //模态框传值
+
+        $('#allotModal').on('show.bs.modal', function (event,index  ) {
+            var row=$("#dataGrid").bootstrapTable('getSelections');
+
+
+            var modal = $(this);
+            modal.find('.modal-title').text(row[0].name);
+            modal.find('#id').val(row[0].id);
+
+
+        });
+
+        //提交更改
+        function update() {
+            //获取模态框数据
+            var stuno = $('#stuno').val();
+            var pass = $('#pass').val();
+            var name = $('#stuname').val();
+            var sex = $('input:radio[name="sex"]:checked').val();
+            $.ajax({
+                type: "post",
+                url: "update.do",
+                data: "stuno=" + stuno + "&pass=" + pass + "&name=" + name + "&sex=" + sex,
+                dataType: 'html',
+                contentType: "application/x-www-form-urlencoded; charset=utf-8",
+                success: function(result) {
+                    location.reload();
+                }
+            });
+        }
+
 
 
 

@@ -67,6 +67,17 @@ public class GhController  extends BaseController {
 
     }
 
+    @ResponseBody
+    @RequestMapping(value="/findcust")
+    public Cust findCust(Cust cust) throws Exception{
+
+
+
+        Cust data= ghService.findCust(cust);
+        return data;
+
+
+    }
 
 
 

@@ -25,15 +25,25 @@ public class GhService {
 
 
     public List<Cust> listCust(Cust cust) throws Exception {
-        DynamicDataSourceHolder.setDataSource("bisqlserver");
+
         List<Cust> listcust=  (List<Cust>) dao.findForList("CustMapper.listCust",cust);
-        DynamicDataSourceHolder.setDataSource("sqlserver");
+
         return  listcust;
 
 
 
     }
 
+
+    public  Cust findCust(Cust cust) throws Exception {
+
+        Cust data=  (Cust) dao.findForObject("CustMapper.findById",cust);
+
+        return  data;
+
+
+
+    }
 
 
 

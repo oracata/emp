@@ -102,7 +102,7 @@
 			</map>
 		</property>
 		<!-- 这里可以指定默认的数据源 -->
-		<property name="defaultTargetDataSource" ref="dataSource2" />
+		<property name="defaultTargetDataSource" ref="dataSource3" />
 	</bean>
 
 
