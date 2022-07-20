@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--dao直接引用-->
+<mapper namespace="CallMapper">
+
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+
+    <parameterMap id="procedureMap" type="com.gz.entity.gh.Call">
+        <parameter property="customerid" mode="IN" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <parameter property="emp" mode="IN" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <parameter property="operate_user" mode="IN" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <parameter property="type" mode="IN" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <parameter property="message" mode="INOUT" javaType="java.lang.String" jdbcType="VARCHAR"/>
+    </parameterMap>
+
+
+
+
+<select id="allotCust" resultType="Call"  parameterMap="procedureMap">
+
+    <![CDATA[
+        {
+            call dbo.pro_ods_ads_ec_TaskAllot(
+                #{customerid,mode=IN, jdbcType=VARCHAR},
+                  #{emp,mode=IN, jdbcType=VARCHAR},
+                    #{operate_user,mode=IN, jdbcType=VARCHAR},
+                      #{type,mode=IN, jdbcType=VARCHAR},
+                #{message,mode=INOUT, jdbcType=VARCHAR}
+                )
+        }
+       ]]>
+
+</select>
+
+</mapper>

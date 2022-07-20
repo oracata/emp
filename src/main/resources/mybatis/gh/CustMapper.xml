@@ -9,7 +9,7 @@
 
     <!--  -->
     <select id="listCust"   resultType="Cust" useCache="false">
-        select id, case when applicationid =1 then '诊宝倍'
+        select a.id, case when applicationid =1 then '诊宝倍'
         when applicationid=2 then '好药优选' else '' end  applicationname,name,linkname,linkphone,
         city_name,county,his_tag,now_tag ,end_order_rq,emp1,emp1_phone,emp3,emp ,
         isnull(gh_emp,'') gh_emp,isnull(gh_rq,'') gh_rq,
@@ -17,9 +17,10 @@
         when   gh_isvalid=0 then  '激活中'
         when  gh_isvalid=-1 then '激活失败'
         else '无任务' end gh_isvalid
-        from ods_ads.dbo.ods_ads_ec_user_all_day  with (nolock)  where stat_day=CONVERT(varchar,GETDATE(),23)
+        from ods_ads.dbo.ods_ads_ec_user_all_day  a  with (nolock) inner join ods_ads_ec_customer_order_by b  with (nolock)  on a.id=b.id  where stat_day=CONVERT(varchar,GETDATE(),23)
         and name not like '%测试%' and IsValid=1 and  DATEDIFF(DAY, end_order_rq, CONVERT(varchar,GETDATE(),23)) >60
         and isnull(gh_isvalid,-1)!=0
+        order by b.sn
 
 
 
@@ -29,7 +30,7 @@
 
     <!-- 通过id获取数据 -->
     <select id="findById" parameterType="Cust" resultType="Cust" useCache="false">
-		id, case when applicationid =1 then '诊宝倍'
+		a.id, case when applicationid =1 then '诊宝倍'
         when applicationid=2 then '好药优选' else '' end  applicationname,name,linkname,linkphone,
         city_name,county,his_tag,now_tag ,end_order_rq,emp1,emp1_phone,emp3,emp ,
         isnull(gh_emp,'') gh_emp,isnull(gh_rq,'') gh_rq,
@@ -37,7 +38,7 @@
         when   gh_isvalid=0 then  '激活中'
         when  gh_isvalid=-1 then '激活失败'
         else '无任务' end gh_isvalid
-        from ods_ads.dbo.ods_ads_ec_user_all_day  with (nolock)  where stat_day=CONVERT(varchar,GETDATE(),23)
+        from ods_ads.dbo.ods_ads_ec_user_all_day a  with (nolock) inner join ods_ads_ec_customer_order_by b  with (nolock)  on a.id=b.id  where stat_day=CONVERT(varchar,GETDATE(),23)
         and name not like '%测试%' and IsValid=1 and  DATEDIFF(DAY, end_order_rq, CONVERT(varchar,GETDATE(),23)) >60
         and isnull(gh_isvalid,-1)!=0
 		and ID = #{ID}

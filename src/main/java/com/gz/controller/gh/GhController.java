@@ -3,6 +3,7 @@ package com.gz.controller.gh;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.gz.controller.base.BaseController;
+import com.gz.entity.gh.Call;
 import com.gz.entity.gh.Cust;
 import com.gz.entity.report.ReportDay;
 import com.gz.entity.report.Search;
@@ -18,9 +19,7 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
@@ -52,7 +51,7 @@ public class GhController  extends BaseController {
     }
 
 
-//分配
+//查询客户
 
     @ResponseBody
     @RequestMapping(value="/allot")
@@ -75,6 +74,27 @@ public class GhController  extends BaseController {
 
         Cust data= ghService.findCust(cust);
         return data;
+
+
+    }
+
+
+
+    @ResponseBody
+    @RequestMapping(value="/callallot"  ,method = RequestMethod.GET)
+    public String  callAllot(  String id,
+                             String emp,
+                              String user,
+                             int type) throws Exception{
+         Call call=new Call();
+         call.setCustomerid(id);
+         call.setEmp(emp);
+         call.setOperate_user(user);
+         call.setType(type);
+
+
+        Call message= ghService.callAllot(call);
+        return message.getMessage();
 
 
     }

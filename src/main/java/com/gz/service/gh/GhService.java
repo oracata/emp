@@ -3,6 +3,7 @@ package com.gz.service.gh;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.gz.dao.DaoSupport;
+import com.gz.entity.gh.Call;
 import com.gz.entity.gh.Cust;
 import com.gz.entity.report.ReportDay;
 import com.gz.entity.report.Search;
@@ -46,6 +47,15 @@ public class GhService {
     }
 
 
+    public  Call callAllot(Call call) throws Exception {
+
+        dao.callForObject("CallMapper.allotCust",call);
+
+        return  call;
+
+
+
+    }
 
 
 

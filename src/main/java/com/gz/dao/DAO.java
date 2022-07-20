@@ -55,5 +55,16 @@ public interface DAO {
 	 * @throws Exception
 	 */
 	public Object findForMap(String sql, Object obj, String key , String value) throws Exception;
+
+
+	/**
+	 * 调用存储过程
+	 * @param str
+	 * @param obj
+	 * @return
+	 * @throws Exception
+	 */
+	public Object callForObject(String str, Object obj) throws Exception;
+
 	
 }

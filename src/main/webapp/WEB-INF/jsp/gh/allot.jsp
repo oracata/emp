@@ -128,6 +128,9 @@
 
 
 
+
+
+
 <!-- 模态框（Modal） 分配-->
 
 <div class="modal fade" id="allotModal" tabindex="-1" role="dialog" aria-labelledby="allotModalLabel" aria-hidden="true">
@@ -145,7 +148,7 @@
 
 
 
-                    <form>
+                    <form id="form_data">
 
                         <div class="form-group">
                         <div class="lable">
@@ -160,7 +163,7 @@
                         <div class="form-group">
 
                             <b>*</b>请选择客服:</div>
-                            <select class="form-control"  placeholder="请选择：" style="width:100%;height:100%" id="sel">
+                            <select class="form-control"  placeholder="请选择：" style="width:100%;height:100%" id="emp">
                                 <option value ="邹霞">邹霞</option>
                                 <option value ="唐荣">唐荣</option>
                                 <option value="刘崇敏">刘崇敏</option>
@@ -168,6 +171,12 @@
                                 <option value="陆慧敏">陆慧敏</option>
                             </select>
                         </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                            <button type="button" class="btn btn-primary"   id="sub"    >提交</button>
+                        </div>
+
                     </form>
 
 
@@ -175,10 +184,7 @@
 
 
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                <button type="button" class="btn btn-primary" οnclick="update()">提交</button>
-            </div>
+
         </div>
         <!-- /.modal-content -->
     </div>
@@ -190,7 +196,9 @@
 <!-- 模态框（Modal） 领取-->
 
 <div class="modal fade" id="getModal" tabindex="-1" role="dialog" aria-labelledby="getModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+
+        <div class="modal-dialog" style="  overflow: auto; pointer-events:auto">
+
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -207,7 +215,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                <button type="button" class="btn btn-primary" οnclick="update()">确定</button>
+                <button type="button"  class="btn btn-primary"  id="submit">确定</button>
             </div>
         </div>
         <!-- /.modal-content -->
@@ -322,7 +330,7 @@
                 ,{
                     field: '',
                     title: "",
-                    formatter:allotCust
+                    formatter:allotCust,
                 }
 
             ],
@@ -379,23 +387,13 @@
             var htm = '<button  class="btn btn-primary " data-toggle="modal" data-target="#getModal"    >领取' + '</button>';
             }else
             {
-                var htm = '<button    class="btn btn-primary"  data-toggle="modal"  data-target="#allotModal"     data-whatever="aaaaaa" >分配' + '</button>';
+                var htm = '<button    class="btn btn-primary"  data-toggle="modal"  data-target="#allotModal"     id="aaaaaa" >分配' + '</button>';
             }
             return htm;
         }
 
 
-//初始化时弹出框隐藏
-        /*
-               $(function () { $('#allotModal').modal('hide')});
 
-
-
-           $(function () { $('#myModal').on('hide.bs.modal', function () {
-               alert('嘿，我听说您喜欢模态框...');})
-           });
-
-        */
 
 //向modal 中传值
 
@@ -412,24 +410,38 @@
 
         });
 
-        //提交更改
-        function update() {
-            //获取模态框数据
-            var stuno = $('#stuno').val();
-            var pass = $('#pass').val();
-            var name = $('#stuname').val();
-            var sex = $('input:radio[name="sex"]:checked').val();
+        //模态框中的 按钮事件
+        $("#sub").click(function(event){
+            var id = $('#id').val();
+            var emp = $('#emp').val();
+            var user = '测试';
+            var type = 0;
             $.ajax({
-                type: "post",
-                url: "update.do",
-                data: "stuno=" + stuno + "&pass=" + pass + "&name=" + name + "&sex=" + sex,
-                dataType: 'html',
-                contentType: "application/x-www-form-urlencoded; charset=utf-8",
-                success: function(result) {
-                    location.reload();
+                type: "get",
+                url: "gh/callallot",
+                data: {
+                    "id": id,
+                    "emp": emp,
+                    "user": user,
+                    "type": type,
+
+                },
+               dataType: "json",
+                success: function (res) {
+                    alert(res);
+                },
+                error: function (err) {
+                    alert(JSON.stringify(err));
                 }
             });
-        }
+
+        });
+
+
+
+
+
+
 
 
 
