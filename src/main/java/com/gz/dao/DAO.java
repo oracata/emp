@@ -49,7 +49,7 @@ public interface DAO {
 	
 	/**
 	 * 查找对象封装成Map
-	 * @param s
+	 * @param
 	 * @param obj
 	 * @return
 	 * @throws Exception

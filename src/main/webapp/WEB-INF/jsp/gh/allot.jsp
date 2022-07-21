@@ -49,8 +49,9 @@
     <div id="page-content" class="clearfix">
 
 
-
-
+   <!--当前用户权限id-->
+        <input  type="hidden" name="user_role" id="user_role"  value="${search_con.user_role}"/>
+        <input  type="hidden" name="login_name" id="login_name"  value="${search_con.login_name}"/>
 
 
 
@@ -151,10 +152,17 @@
                     <form id="form_data">
 
                         <div class="form-group">
-                        <div class="lable">
+
                         <div class="input">
                             <input type="hidden" name="id" id="id" value=""   style="width: 400px;height: 37px; float: left;"/>
                         </div>
+                        </div>
+
+                        <div class="form-group">
+
+                            <div class="input">
+                                <input type="hidden" name="operate_user" id="operate_user" value=""   style="width: 400px;height: 37px; float: left;"/>
+                            </div>
                         </div>
 
 
@@ -170,11 +178,11 @@
                                 <option value="段晓芳">段晓芳</option>
                                 <option value="陆慧敏">陆慧敏</option>
                             </select>
-                        </div>
+
 
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                            <button type="button" class="btn btn-primary"   id="sub"    >提交</button>
+                            <button type="button" class="btn btn-primary"   id="sub"    >分配</button>
                         </div>
 
                     </form>
@@ -202,21 +210,50 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                <h4 class="modal-title" id="getModalLabel">修改信息</h4>
+                <h4 class="modal-title" id="getModalLabel">无数据</h4>
             </div>
             <div class="modal-body">
 
 
 
 
-              确定领取？
+                <form id="form_data_get">
+
+                    <div class="form-group">
+
+                        <div class="input">
+                            <input type="hidden" name="id_get" id="id_get" value=""   style="width: 400px;height: 37px; float: left;"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+
+                        <div class="input">
+                            <input type="hidden" name="operate_user_get" id="operate_user_get" value=""   style="width: 400px;height: 37px; float: left;"/>
+                        </div>
+                    </div>
+
+
+
+
+                    <div class="form-group">
+                        <b>*</b>客服:</div>
+
+                    <input type="text" readonly="readonly" name="emp_get" id="emp_get" value=""   style="width: 400px;height: 37px; float: left;"/>
+
+
+
+                </form>
 
 
             </div>
+
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                <button type="button"  class="btn btn-primary"  id="submit">确定</button>
+                <button type="button" class="btn btn-primary"   id="sub_get"    >领取</button>
             </div>
+
+
         </div>
         <!-- /.modal-content -->
     </div>
@@ -244,7 +281,7 @@
             singleSelect: true,//单行选择单行,设置为true将禁止多选
             clickToSelect: true,//点击行时自动选择
            // striped: true,//是否显示行间隔色
-            theadClasses: "bg-primary",
+
             columns: [
                 {
                     checkbox: true
@@ -290,6 +327,7 @@
                 , {
                     field: 'his_tag',
                     title: '历史最高标签',
+                    sortable:true,
                 }
                 , {
                     field: 'now_tag',
@@ -298,6 +336,7 @@
                 , {
                     field: 'end_order_rq',
                     title: '末单日期',
+                    sortable:true,
                 }
                 , {
                     field: 'emp1',
@@ -327,6 +366,14 @@
                     field: 'gh_isvalid',
                     title: '公海状态',
                 }
+                ,
+
+                {
+                    field: 'is_take',
+                    title: 'is_take',
+                    visible: false,
+                }
+
                 ,{
                     field: '',
                     title: "",
@@ -334,7 +381,10 @@
                 }
 
             ],
-            //search : true,//搜索
+            sortable:true,
+            sortName:'end_order_rq',
+            sortOrder:'desc',
+
             //showToggle:true,
             //showRefresh: true,
             locale:'zh-CN',//中文支持
@@ -367,7 +417,7 @@
                 pageNumber : this.pageNumber,
                 pageSize : this.pageSize,
                 sortName : this.sortName,
-                sortOrder : this.sortOrder,
+                sortOrder :this.sortOrder,
                 begin_date: $("#begin_date").val(),
                 end_date:$("#end_date").val(),
 
@@ -382,13 +432,15 @@
 
         //领取 分配 按钮
         function allotCust(value, row, index) {
+           var roleid= $("#user_role").val();
 
-            if(1==2){
-            var htm = '<button  class="btn btn-primary " data-toggle="modal" data-target="#getModal"    >领取' + '</button>';
-            }else
-            {
-                var htm = '<button    class="btn btn-primary"  data-toggle="modal"  data-target="#allotModal"     id="aaaaaa" >分配' + '</button>';
-            }
+                if (roleid== 'e74f713314154c35bd7fc98897859fe3') {
+                    var htm = '<button  class="btn btn-primary " data-toggle="modal" data-target="#getModal"    >领取' + '</button>';
+                } else {
+                    var htm = '<button    class="btn btn-primary"  data-toggle="modal"  data-target="#allotModal"     id="aaaaaa" >分配' + '</button>';
+                }
+
+
             return htm;
         }
 
@@ -397,7 +449,7 @@
 
 //向modal 中传值
 
-        //模态框传值
+        //模态框传值 bootstrapTable必须要有checkbox:true和singleSelect:true
 
         $('#allotModal').on('show.bs.modal', function (event,index  ) {
             var row=$("#dataGrid").bootstrapTable('getSelections');
@@ -406,6 +458,7 @@
             var modal = $(this);
             modal.find('.modal-title').text(row[0].name);
             modal.find('#id').val(row[0].id);
+            modal.find('#operate_user').val( $("#login_name").val());
 
 
         });
@@ -414,7 +467,7 @@
         $("#sub").click(function(event){
             var id = $('#id').val();
             var emp = $('#emp').val();
-            var user = '测试';
+            var user = $('#operate_user').val();
             var type = 0;
             $.ajax({
                 type: "get",
@@ -428,19 +481,78 @@
                 },
                dataType: "json",
                 success: function (res) {
+
+                    //重新加载表数据
+
+
                     alert(res);
+
+
                 },
                 error: function (err) {
                     alert(JSON.stringify(err));
                 }
             });
 
+            $('#allotModal').modal('hide');
+
+            //刷新表 留在在当前页
+            var page = $("#dataGrid").bootstrapTable("getOptions").pageNumber;
+            $('#dataGrid').bootstrapTable('refreshOptions',{pageNumber:page});
         });
 
 
 
 
 
+        $('#getModal').on('show.bs.modal', function (event,index  ) {
+            var row=$("#dataGrid").bootstrapTable('getSelections');
+
+
+            var modal = $(this);
+             modal.find('.modal-title').text(row[0].name);
+
+            modal.find('#id_get').val(row[0].id);
+
+            modal.find('#operate_user_get').val($("#login_name").val());
+            modal.find('#emp_get').val($("#login_name").val());
+
+
+        });
+
+        //模态框中的 按钮事件
+        $("#sub_get").click(function(event){
+            var id = $('#id_get').val();
+            var emp = $('#emp_get').val();
+            var user = $('#operate_user_get').val();
+            var type = 0;
+            $.ajax({
+                type: "get",
+                url: "gh/callallot",
+                data: {
+                    "id": id,
+                    "emp": emp,
+                    "user": user,
+                    "type": type,
+
+                },
+
+                dataType: "json",
+                success: function (res) {
+                    alert(JSON.parse(JSON.stringify(res)).responseText);
+                },
+                //现在所有都走error
+                error: function (err) {
+                    alert(JSON.parse(JSON.stringify(err)).responseText);
+                }
+            });
+
+            $('#getModal').modal('hide');
+
+            //刷新表 留在在当前页
+            var page = $("#dataGrid").bootstrapTable("getOptions").pageNumber;
+            $('#dataGrid').bootstrapTable('refreshOptions',{pageNumber:page});
+        });
 
 
 

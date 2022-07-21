@@ -35,7 +35,7 @@
 				<ul class="nav nav-list">
 
 					<li class="active" id="fhindex">
-					  <a href="main/index"><i class="icon-dashboard"></i><span>后台首页</span></a>
+					  <a href="main/index"><i class="icon-dashboard"></i><span>首页</span></a>
 					</li>
 
 

@@ -127,6 +127,7 @@ public class LoginController extends BaseController {
 						user.setSTATUS(pd.getString("STATUS"));
 						session.setAttribute(Const.SESSION_USER, user);
 						session.removeAttribute(Const.SESSION_SECURITY_CODE);
+						session.setAttribute(Const.SESSION_ROLE_ID, user.getROLE_ID());	//放入用户roleid
 						
 						//shiro加入身份验证
 						Subject subject = SecurityUtils.getSubject(); 
@@ -183,7 +184,10 @@ public class LoginController extends BaseController {
 				//避免每次拦截用户操作时查询数据库，以下将用户所属角色权限、用户权限限都存入session
 				session.setAttribute(Const.SESSION_ROLE_RIGHTS, roleRights); 		//将角色权限存入session
 				session.setAttribute(Const.SESSION_USERNAME, user.getUSERNAME());	//放入用户名
-				
+				session.setAttribute(Const.SESSION_NAME, user.getNAME());	//放入用户名
+
+
+
 				List<Menu> allmenuList = new ArrayList<Menu>();
 				
 				if(null == session.getAttribute(Const.SESSION_allmenuList)){

@@ -23,8 +23,47 @@ public class Cust extends PageModel {
     private String gh_isvalid          ;
     private String login_name          ;
 
+    public String getSortName() {
+        return sortName;
+    }
+
+    public void setSortName(String sortName) {
+        this.sortName = sortName;
+    }
+
+    public String getSortOrder() {
+        return sortOrder;
+    }
+
+    public void setSortOrder(String sortOrder) {
+        this.sortOrder = sortOrder;
+    }
+
+    private  String sortName;
+    private String sortOrder;
+
+    public String getUser_role() {
+        return user_role;
+    }
+
+    public void setUser_role(String user_role) {
+        this.user_role = user_role;
+    }
+
+    private String user_role;
+
     private String begin_date              ;
     private String end_date              ;
+
+    public int getIs_take() {
+        return is_take;
+    }
+
+    public void setIs_take(int is_take) {
+        this.is_take = is_take;
+    }
+
+    private int is_take;
 
     public String getBegin_date() {
         return begin_date;

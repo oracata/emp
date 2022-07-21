@@ -49,7 +49,7 @@ public class GhService {
 
     public  Call callAllot(Call call) throws Exception {
 
-        dao.callForObject("CallMapper.allotCust",call);
+        Call message=  (Call) dao.callForObject("CallMapper.allotCust",call);
 
         return  call;
 

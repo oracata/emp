@@ -10,9 +10,11 @@ import com.gz.entity.report.Search;
 import com.gz.entity.system.User;
 import com.gz.service.gh.GhService;
 import com.gz.service.report.ReportService;
+import com.gz.service.system.user.UserService;
 import com.gz.util.Const;
 import com.gz.util.DataGridView;
 import com.gz.util.DateUtil;
+import com.gz.util.PageData;
 import com.sun.xml.internal.rngom.parse.host.GrammarSectionHost;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
@@ -29,13 +31,15 @@ import java.util.Map;
 @Controller
 @RequestMapping(value="/gh")
 public class GhController  extends BaseController {
+
     @Resource(name="ghService")
     private GhService ghService;
+
     String menuUrl = "gh/listCust.do"; //菜单地址(权限用)
 
 
     @RequestMapping("/cust")
-    public ModelAndView getSearch(Model model, @ModelAttribute Cust v_cust){
+    public ModelAndView getSearch(Model model, @ModelAttribute Cust v_cust) throws Exception {
         //这个地方设置权限
 
         //初始化查询条件
@@ -44,6 +48,13 @@ public class GhController  extends BaseController {
             v_cust.setEnd_date(DateUtil.getTimeDay(0));
 
         }
+        Subject currentUser = SecurityUtils.getSubject();  //shiro管理的session
+        Session session = currentUser.getSession();
+        String ROLE_ID = (String)session.getAttribute(Const.SESSION_ROLE_ID);
+        v_cust.setUser_role(ROLE_ID);
+        String name = (String)session.getAttribute(Const.SESSION_NAME);
+        v_cust.setLogin_name(name);
+
         ModelAndView mav = new ModelAndView("gh/allot");
         mav.addObject("search_con", v_cust);
 
@@ -82,10 +93,7 @@ public class GhController  extends BaseController {
 
     @ResponseBody
     @RequestMapping(value="/callallot"  ,method = RequestMethod.GET)
-    public String  callAllot(  String id,
-                             String emp,
-                              String user,
-                             int type) throws Exception{
+    public String  callAllot(  String id, String emp, String user, int type) throws Exception{
          Call call=new Call();
          call.setCustomerid(id);
          call.setEmp(emp);
@@ -93,7 +101,15 @@ public class GhController  extends BaseController {
          call.setType(type);
 
 
-        Call message= ghService.callAllot(call);
+        Subject currentUser = SecurityUtils.getSubject();  //shiro管理的session
+        Session session = currentUser.getSession();
+        String username = (String)session.getAttribute(Const.SESSION_NAME);
+        call.setOperate_user(username);
+
+
+
+
+        Call message=(Call)ghService.callAllot(call);
         return message.getMessage();
 
 

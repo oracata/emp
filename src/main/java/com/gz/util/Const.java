@@ -16,6 +16,8 @@ public class Const {
 	public static final String SESSION_userpds = "userpds";			
 	public static final String SESSION_USERROL = "USERROL";				//用户对象
 	public static final String SESSION_USERNAME = "USERNAME";			//用户名
+	public static final String SESSION_NAME = "NAME";			//用户名
+	public static final String SESSION_ROLE_ID = "ROLE_ID";			//用户名
 	public static final String TRUE = "T";
 	public static final String FALSE = "F";
 	public static final String LOGIN = "/login_toLogin.do";				//登录地址
