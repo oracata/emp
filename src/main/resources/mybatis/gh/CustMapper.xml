@@ -8,7 +8,7 @@
 
 
     <!--  -->
-    <select id="listCust"   parameterType="Cust"  resultType="Cust"  >
+    <select id="listCust"   parameterType="Cust"  resultType="Cust"   useCache="false">
         select a.id, case when applicationid =1 then '诊宝倍'
         when applicationid=2 then '好药优选' else '' end  applicationname,name,linkname,linkphone,
         city_name,county,his_tag,now_tag ,end_order_rq,emp1,emp1_phone,emp3,emp ,
@@ -21,27 +21,18 @@
         from ods_ads.dbo.ods_ads_ec_user_all_day  a  with (nolock) inner join ods_ads_ec_customer_order_by b  with (nolock)  on a.id=b.id  and b.is_take=0  where stat_day=CONVERT(varchar,GETDATE(),23)
         and name not like '%测试%' and IsValid=1 and  DATEDIFF(DAY, end_order_rq, CONVERT(varchar,GETDATE(),23)) >60
         and isnull(gh_isvalid,-1)!=0
-        <if test="begin_date != null and end_date != ''">
-            and end_order_rq  between  #{begin_date} and  #{end_date}
-        </if>
 
-        <!--
-                <if test="sortName != null and sortOrder != ''">
 
-             order by  ${sortName}
-        </if>
-    -->
-<!--
 
-        <choose>
-            <when test="sortName!=null and sortName!='' and sortOrder!=null and sortOrder!=''">
-                order by  #{sortName} #{sortOrder}
-            </when>
-            <otherwise>
-                order by b.sn
-            </otherwise>
-        </choose>
--->
+            <choose>
+                <when test="sortInfo!=null and sortInfo !=''">
+                    order by ${sortInfo}
+                </when>
+                <otherwise>
+                    order by b.sn
+                </otherwise>
+            </choose>
+
 
 
     </select>

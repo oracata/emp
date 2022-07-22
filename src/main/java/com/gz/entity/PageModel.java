@@ -10,6 +10,16 @@ public class PageModel {
     //数值没有作用 bootstrap-table已经设置
     private Integer pageSize=10;
 
+    private String sortInfo;
+
+    public String getSortInfo() {
+        return sortInfo;
+    }
+
+    public void setSortInfo(String sortInfo) {
+        this.sortInfo = sortInfo;
+    }
+
     public Integer getPageNumber() {
         return pageNumber;
     }

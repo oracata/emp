@@ -26,6 +26,12 @@
     <script src="static/js/ace.min.js"></script>
     <!-- 引入 -->
 
+
+    <link href="static/js/bootstrap-table/bootstrap-table.css" rel="stylesheet">
+
+    <script src="static/js/bootstrap-table/bootstrap-table.js"></script>
+    <script src="static/js/bootstrap-table/extensions/multiple-sort/bootstrap-table-multiple-sort.js"></script>
+
 </head>
 
 
@@ -93,7 +99,11 @@
 
 
                     <div id="table-responsive-width"  >
-                        <table   id="dataGrid">
+                        <table   id="dataGrid"
+                                 data-search="true"
+                                 data-show-columns="true"
+                                 data-show-multi-sort="true"
+                        >
                         </table>
                     </div>
                 </div>

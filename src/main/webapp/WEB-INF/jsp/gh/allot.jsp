@@ -22,14 +22,24 @@
     <!-- 引入 -->
 
     <script type="text/javascript">window.jQuery || document.write("<script src='static/js/jquery-1.9.1.min.js'>\x3C/script>");</script>
-    <script src="static/js/bootstrap.min.js"></script>
+
+
+       <script src="static/js/bootstrap.min.js"></script>
+
+
+    <link href="static/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+
+    <script src="static/bootstrap-table/bootstrap-table.min.js"></script>
+       <!--汉化文件，放在 bootstrap-table.js 后面-->
+    <script src="static/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
+ <script src="static/bootstrap-table/extensions/multiple-sort/bootstrap-table-multiple-sort.js"></script>
 
 
 
-        <script src="static/js/ace-elements.min.js"></script>
-        <script src="static/js/ace.min.js"></script>
 
-        <!-- 引入 -->
+    <script src="static/js/ace-elements.min.js"></script>
+    <script src="static/js/ace.min.js"></script>
+
 
 
 
@@ -46,10 +56,10 @@
 <div class="container-fluid" id="main-container">
 
 
-    <div id="page-content" class="clearfix">
+ <div id="page-content" class="clearfix">
 
 
-   <!--当前用户权限id-->
+<!--当前用户权限id-->
         <input  type="hidden" name="user_role" id="user_role"  value="${search_con.user_role}"/>
         <input  type="hidden" name="login_name" id="login_name"  value="${search_con.login_name}"/>
 
@@ -91,7 +101,7 @@
                             <tr>
 
                                 <td><input    class="span10 date-picker" name="begin_date" id="begin_date"  value="${search_con.begin_date}" type="text" data-date-format="yyyy-mm-dd" readonly="readonly" style="width:88px;" placeholder="开始日期" title="请选择"/></td>
-                                <td><input    class="span10 date-picker" name="end_date" id="end_date"  value="${search_con.end_date}" type="text" data-date-format="yyyy-mm-dd" readonly="readonly" style="width:88px;" placeholder="结束日期" title="请选择"/></td>
+                                                      <td><input    class="span10 date-picker" name="end_date" id="end_date"  value="${search_con.end_date}" type="text" data-date-format="yyyy-mm-dd" readonly="readonly" style="width:88px;" placeholder="结束日期" title="请选择"/></td>
 
 
                                 <td style="vertical-align:top;"><button class="btn btn-mini btn-light"   title="检索"><i id="nav-search-icon" class="icon-search"></i></button></td>
@@ -106,8 +116,11 @@
 
 
                     <div id="table-responsive-width"  >
-                        <table   id="dataGrid">
-                        </table>
+
+
+                        <table id="dataGrid" ></table>
+
+
                     </div>
                 </div>
 
@@ -269,23 +282,28 @@
 
 
 
+
     $(function () {
 
 
 
-        $('#dataGrid').bootstrapTable({
+         $('#dataGrid').bootstrapTable({
             method:"POST",
             //极为重要，缺失无法执行queryParams，传递page参数
             contentType : "application/x-www-form-urlencoded",
             dataType:"json",
+
             singleSelect: true,//单行选择单行,设置为true将禁止多选
             clickToSelect: true,//点击行时自动选择
            // striped: true,//是否显示行间隔色
 
             columns: [
+          /*
                 {
                     checkbox: true
-                }, {
+                },
+         */
+                {
                     title: '序号',
                     field: '',
                     align: 'center',
@@ -304,7 +322,8 @@
                 ,  {
                     field: 'applicationname',
                     title: '平台',
-                }, {
+                }
+                , {
                     field: 'name',
                     title: '客户名称',
                 }
@@ -328,6 +347,7 @@
                     field: 'his_tag',
                     title: '历史最高标签',
                     sortable:true,
+
                 }
                 , {
                     field: 'now_tag',
@@ -376,21 +396,28 @@
 
                 ,{
                     field: '',
-                    title: "",
+                    title: "操作",
                     formatter:allotCust,
                 }
 
             ],
-            sortable:true,
-            sortName:'end_order_rq',
-            sortOrder:'desc',
 
-            //showToggle:true,
-            //showRefresh: true,
+
+            showColumns:true, //选择显示字段框
+
+
+
+             sortable: true, // 是否启用排序
+            showMultiSort: true, // 多列排序
+             //sortName:'end_order_rq',
+           //  sortOrder:'desc',
+
+            //showToggle:true, 反转显示按钮
+            //showRefresh: true,刷新按钮
             locale:'zh-CN',//中文支持
             //页面需要展示的列，后端交互对象的属性
             pagination: true,  //开启分页
-            sidePagination: 'server',
+            sidePagination: 'server',//服务器端处理分页
             pageNumber: 1,//默认加载页
             pageSize: 20,//每页数据
             // pageList: [5,10,15,20],//可选的每页数据
@@ -404,9 +431,8 @@
                     "total":res.total,
                     "rows":res.rows
                 }
-
-
             }
+
         });
 
         function queryParam(params){
@@ -416,17 +442,23 @@
                 offset : this.offset, // 页码
                 pageNumber : this.pageNumber,
                 pageSize : this.pageSize,
-                sortName : this.sortName,
-                sortOrder :this.sortOrder,
+
                 begin_date: $("#begin_date").val(),
                 end_date:$("#end_date").val(),
 
+             //   sort: params.sort,      //排序列名
+              //  sortOrder: params.order //排位命令（desc，asc）
+
             };
+
+
+
 
             return param;
         }
 
-        //分配操作
+        //排序操作
+
 
 
 
