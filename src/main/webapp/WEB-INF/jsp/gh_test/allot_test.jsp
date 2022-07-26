@@ -18,17 +18,18 @@
     <!-- jsp文件头和头部 -->
     <%@ include file=".././system/admin/top.jsp"%>
 
-    <link rel="stylesheet" href="static/css/my-responsive.css" />
+       <link rel="stylesheet" href="static/css/my-responsive.css" />
 
-    <!-- 引入 -->
+       <!-- 引入 -->
 
-    <script type="text/javascript">window.jQuery || document.write("<script src='static/js/jquery-1.9.1.min.js'>\x3C/script>");</script>
+
+
     <script src="static/js/bootstrap.min.js"></script>
 
 
 
-    <script src="static/js/ace-elements.min.js"></script>
-    <script src="static/js/ace.min.js"></script>
+
+
 
     <!-- 引入 -->
 
@@ -101,10 +102,13 @@
                             <td>&nbsp;</td>
                             <td><input    class="span10 date-picker" name="end_date" id="end_date"  value="${search_con.end_date}" type="text" data-date-format="yyyy-mm-dd" readonly="readonly" style="width:88px;" placeholder="结束日期" title="请选择"/></td>
 
-                            <td>&nbsp; &nbsp; &nbsp;   &nbsp; &nbsp; &nbsp;</td>
-                            <td  ><button class="btn btn-mini btn-light"   title="检索"><i id="nav-search-icon" class="icon-search"></i></button></td>
-                           <!-- <td style="vertical-align:top;"><a class="btn btn-mini btn-light" onclick="toExcel();" title="导出到EXCEL"><i id="nav-search-icon" class="icon-download-alt"></i></a></td> -->
+
+                            <td  ><button class="btn btn-mini btn-light"   title="检索">查询<i id="nav-search-icon" class="icon-search"></i></button></td>
+                            <!-- <td style="vertical-align:top;"><a class="btn btn-mini btn-light" onclick="toExcel();" title="导出到EXCEL"><i id="nav-search-icon" class="icon-download-alt"></i></a></td> -->
                         </tr>
+                        <tr><td>
+                            <a title="批量处理" class="btn btn-small btn-danger" onclick="makeAll('确定要分配选中的客户吗?');" ><i class='icon-check'></i></a>
+                        </td></tr>
                     </table>
 
 
@@ -114,8 +118,12 @@
 
 
                 <div id="table-responsive-width"  >
-                    <table   id="dataGrid">
+                    <lable>
+                    <table   id="dataGrid"
+
+                    >
                     </table>
+                    </lable>
                 </div>
             </div>
 
@@ -292,7 +300,18 @@
 
             columns: [
                 {
-                    checkbox: true
+
+                    title: '全选 <label><input type="checkbox" id="allcheckbox" /><span class="lbl"></span></label>',
+                    formatter: function allotCust(value, row, index) {
+
+                                var htm = '   <label><input type="checkbox"  name="thischeckbox" id="thischeckbox" /><span class="lbl"></span></label>';
+
+
+                            return htm;
+                        }
+
+
+
                 }, {
                     title: '序号',
                     field: '',
@@ -405,7 +424,7 @@
             ],
             sortOrder:'desc',
             showColumns:true, //选择显示字段框
-           // search : true,//搜索
+            // search : true,//搜索
             //showToggle:true,
             //showRefresh: true,
             locale:'zh-CN',//中文支持
@@ -417,7 +436,7 @@
             // pageList: [5,10,15,20],//可选的每页数据
 
 
-            url: 'gh/allot', //服务器数据的加载地址
+            url: 'gh_test/allot', //服务器数据的加载地址
             queryParams:queryParam,
             responseHandler:function(res){
                 console.log(JSON.stringify(res.rows));
@@ -459,11 +478,11 @@
             }
             else
             {
-                 if (roleid== 'e74f713314154c35bd7fc98897859fe3') {
-                   var htm = '<button  class="btn btn-primary " data-toggle="modal" data-target="#getModal"    >领取' + '</button>';
-                     } else {
+                if (roleid== 'e74f713314154c35bd7fc98897859fe3') {
+                    var htm = '<button  class="btn btn-primary " data-toggle="modal" data-target="#getModal"    >领取' + '</button>';
+                } else {
                     var htm = '<button    class="btn btn-primary"  data-toggle="modal"  data-target="#allotModal"     >分配' + '</button>';
-                     }
+                }
             }
 
             return htm;
@@ -496,7 +515,7 @@
             var type = 0;
             $.ajax({
                 type: "get",
-                url: "gh/callallot",
+                url: "gh_test/callallot",
                 data: {
                     "id": id,
                     "emp": emp,
@@ -553,7 +572,7 @@
             var type = 0;
             $.ajax({
                 type: "get",
-                url: "gh/callallot",
+                url: "gh_test/callallot",
                 data: {
                     "id": id,
                     "emp": emp,
@@ -616,6 +635,77 @@
     });
 
 
+
+
+
+    //批量操作
+    function makeAll(msg){
+        bootbox.confirm(msg, function(result) {
+            if(result) {
+                var str = '';
+                var emstr = '';
+                var phones = '';
+                for(var i=0;i < document.getElementsByName('ids').length;i++)
+                {
+                    if(document.getElementsByName('thischeckbox')[i].checked){
+                        if(str=='') str += document.getElementsByName('thischeckbox')[i].value;
+                        else str += ',' + document.getElementsByName('thischeckbox')[i].value;
+
+                        if(emstr=='') emstr += document.getElementsByName('thischeckbox')[i].id;
+                        else emstr += ';' + document.getElementsByName('thischeckbox')[i].id;
+
+                        if(phones=='') phones += document.getElementsByName('thischeckbox')[i].alt;
+                        else phones += ';' + document.getElementsByName('thischeckbox')[i].alt;
+                    }
+                }
+                if(str==''){
+                    bootbox.dialog("您没有选择任何内容!",
+                        [
+                            {
+                                "label" : "关闭",
+                                "class" : "btn-small btn-success",
+                                "callback": function() {
+                                    //Example.show("great success");
+                                }
+                            }
+                        ]
+                    );
+
+                    $("#allcheckbox").tips({
+                        side:3,
+                        msg:'点这里全选',
+                        bg:'#AE81FF',
+                        time:8
+                    });
+
+                    return;
+                }else{
+                    if(msg == '确定要删除选中的数据吗?'){
+                        top.jzts();
+                        $.ajax({
+                            type: "POST",
+                            url: '<%=basePath%>user/deleteAllU.do?tm='+new Date().getTime(),
+                            data: {USER_IDS:str},
+                            dataType:'json',
+                            //beforeSend: validateData,
+                            cache: false,
+                            success: function(data){
+                                $.each(data.list, function(i, list){
+                                    nextPage(${page.currentPage});
+                                });
+                            }
+                        });
+                    }else if(msg == '确定要分配所选择的客户吗?'){
+                        sendEmail(emstr);
+                    }else if(msg == '确定要给选中的用户发送短信吗?'){
+                        sendSms(phones);
+                    }
+
+
+                }
+            }
+        });
+    }
 
 </script>
 

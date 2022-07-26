@@ -17,16 +17,24 @@
         when   gh_isvalid=0 then  '激活中'
         when  gh_isvalid=-1 then '激活失败'
         else '无任务' end gh_isvalid,
-        b.is_take
-        from ods_ads.dbo.ods_ads_ec_user_all_day  a  with (nolock) inner join ods_ads_ec_customer_order_by b  with (nolock)  on a.id=b.id  and b.is_take=0  where stat_day=CONVERT(varchar,GETDATE(),23)
+        b.is_take,
+        DATEDIFF(DAY, end_order_rq, CONVERT(varchar,GETDATE(),23)) inactive_day
+        from ods_ads.dbo.ods_ads_ec_user_all_day  a  with (nolock) inner join ods_ads_ec_customer_order_by b  with (nolock)  on a.id=b.id   where stat_day=CONVERT(varchar,GETDATE(),23)
         and name not like '%测试%' and IsValid=1 and  DATEDIFF(DAY, end_order_rq, CONVERT(varchar,GETDATE(),23)) >60
         and isnull(gh_isvalid,-1)!=0
+        and end_order_rq between  #{begin_date} and #{end_date}
 
+
+
+
+        <if test="name!=null and name!=''">
+    and  name like    '%'+#{name}+'%'
+       </if>
 
 
             <choose>
-                <when test="sortInfo!=null and sortInfo !=''">
-                    order by ${sortInfo}
+                <when test="sort!=null and sort !=''">
+                    order by ${sort}  ${sortOrder}
                 </when>
                 <otherwise>
                     order by b.sn

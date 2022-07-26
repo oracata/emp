@@ -33,6 +33,18 @@ public class Cust extends PageModel {
         this.user_role = user_role;
     }
 
+    public int getInactive_day() {
+        return inactive_day;
+    }
+
+    public void setInactive_day(int inactive_day) {
+        this.inactive_day = inactive_day;
+    }
+
+    private int  inactive_day  ;
+
+
+
     private String user_role;
 
     private String begin_date              ;

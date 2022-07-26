@@ -10,15 +10,7 @@ public class PageModel {
     //数值没有作用 bootstrap-table已经设置
     private Integer pageSize=10;
 
-    private String sortInfo;
 
-    public String getSortInfo() {
-        return sortInfo;
-    }
-
-    public void setSortInfo(String sortInfo) {
-        this.sortInfo = sortInfo;
-    }
 
     public Integer getPageNumber() {
         return pageNumber;
@@ -35,4 +27,28 @@ public class PageModel {
     public void setPageSize(Integer pageSize) {
         this.pageSize = pageSize;
     }
+
+
+
+    private String sort;
+    private String sortOrder;
+    public String getSort() {
+        return sort;
+    }
+
+    public void setSort(String sort) {
+        this.sort = sort;
+    }
+
+    public String getSortOrder() {
+        return sortOrder;
+    }
+
+    public void setSortOrder(String sortOrder) {
+        this.sortOrder = sortOrder;
+    }
+
+
+
+
 }

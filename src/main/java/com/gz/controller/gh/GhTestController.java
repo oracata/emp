@@ -25,18 +25,17 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
-import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequestMapping(value="/gh")
-public class GhController  extends BaseController {
+@RequestMapping(value="/gh_test")
+public class GhTestController  extends BaseController {
 
     @Resource(name="ghService")
     private GhService ghService;
 
-    String menuUrl = "gh/listCust.do"; //菜单地址(权限用)
+    String menuUrl = "gh_test/listCust.do"; //菜单地址(权限用)
 
 
     @RequestMapping("/cust")
@@ -45,8 +44,9 @@ public class GhController  extends BaseController {
 
         //初始化查询条件
         if(v_cust.getBegin_date()==null && v_cust.getEnd_date()==null) {
-            v_cust.setBegin_date("2021-12-01" );
+            v_cust.setBegin_date(DateUtil.getTimeDay(0));
             v_cust.setEnd_date(DateUtil.getTimeDay(0));
+
         }
         Subject currentUser = SecurityUtils.getSubject();  //shiro管理的session
         Session session = currentUser.getSession();
@@ -55,7 +55,7 @@ public class GhController  extends BaseController {
         String name = (String)session.getAttribute(Const.SESSION_NAME);
         v_cust.setLogin_name(name);
 
-        ModelAndView mav = new ModelAndView("gh/allot");
+        ModelAndView mav = new ModelAndView("gh_test/allot_test");
         mav.addObject("search_con", v_cust);
 
         return mav;
@@ -94,11 +94,11 @@ public class GhController  extends BaseController {
     @ResponseBody
     @RequestMapping(value="/callallot"  ,method = RequestMethod.GET)
     public String  callAllot(  String id, String emp, String user, int type) throws Exception{
-         Call call=new Call();
-         call.setCustomerid(id);
-         call.setEmp(emp);
-         call.setOperate_user(user);
-         call.setType(type);
+        Call call=new Call();
+        call.setCustomerid(id);
+        call.setEmp(emp);
+        call.setOperate_user(user);
+        call.setType(type);
 
 
         Subject currentUser = SecurityUtils.getSubject();  //shiro管理的session
