@@ -47,6 +47,27 @@
 
 
 
+
+    <select id="logData"   parameterType="Cust"  resultType="Cust"   useCache="false">
+  select name,
+       his_tag,now_tag ,end_order_rq,emp ,
+
+        case when gh_isvalid=1 then '激活成功'
+        when   gh_isvalid=0 then  '激活中'
+        when  gh_isvalid=-1 then '激活失败'
+        else '无任务' end gh_isvalid ,
+		substring(b.time_stamp,1,19)  as end_date ,b.kefu as emp1
+        from ods_ads.dbo.ods_ads_ec_user_all_day  a  with (nolock) inner join  ods_ads_ec_gh_lsb b  with (nolock)  on a.id=b.id
+		where stat_day=CONVERT(varchar,GETDATE(),23)
+        and name not like '%测试%' and IsValid=1
+		 and b.operate_user=#{login_name}
+		 and substring(b.time_stamp,1,19) between  '2022-08-01 00:00:00'  and CONVERT(varchar,GETDATE(),20)
+ order by end_date desc ,name
+
+
+    </select>
+
+
     <!-- 通过id获取数据 -->
     <select id="findById" parameterType="Cust" resultType="Cust" useCache="false">
 		a.id, case when applicationid =1 then '诊宝倍'

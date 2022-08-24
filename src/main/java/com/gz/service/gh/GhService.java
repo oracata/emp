@@ -36,6 +36,17 @@ public class GhService {
     }
 
 
+    public List<Cust> logData(Cust cust) throws Exception {
+
+        List<Cust> listcust=  (List<Cust>) dao.findForList("CustMapper.logData",cust);
+
+        return  listcust;
+
+
+
+    }
+
+
     public  Cust findCust(Cust cust) throws Exception {
 
         Cust data=  (Cust) dao.findForObject("CustMapper.findById",cust);

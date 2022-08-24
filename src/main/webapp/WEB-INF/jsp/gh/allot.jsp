@@ -32,7 +32,7 @@
 
     <!-- 引入 -->
 
-
+    <script type="text/javascript" src="static/js/bootbox.min.js"></script>
 
 </head>
 
@@ -102,8 +102,12 @@
                             <td><input    class="span10 date-picker" name="end_date" id="end_date"  value="${search_con.end_date}" type="text" data-date-format="yyyy-mm-dd" readonly="readonly" style="width:88px;" placeholder="结束日期" title="请选择"/></td>
 
                             <td>&nbsp; &nbsp; &nbsp;   &nbsp; &nbsp; &nbsp;</td>
-                            <td  ><button class="btn btn-mini btn-light"   title="检索"><i id="nav-search-icon" class="icon-search"></i></button></td>
-                           <!-- <td style="vertical-align:top;"><a class="btn btn-mini btn-light" onclick="toExcel();" title="导出到EXCEL"><i id="nav-search-icon" class="icon-download-alt"></i></a></td> -->
+                            <td  style="vertical-align:top;" > <button
+                            ><span  style="padding-top: 5px;">查询</span></button> </td>
+                            <!--   <td  ><button class="btn btn-mini btn-light"   title="检索"><i id="nav-search-icon" class="icon-search"></i>查询</button></td>  -->
+                      <c:if test="${QX.add == 1 }">
+                           <td style="vertical-align:top;"><a class="btn btn-small btn-danger" onclick="batchallot();" title="批量分配" ><i class='icon-edit'></i></a></td>
+                       </c:if>
                         </tr>
                     </table>
 
@@ -142,7 +146,7 @@
 
 <!-- 模态框（Modal） 分配-->
 
-<div class="modal fade" id="allotModal" tabindex="-1" role="dialog" aria-labelledby="allotModalLabel" aria-hidden="true">
+<div class="modal fade hide" id="allotModal" tabindex="-1" role="dialog" aria-labelledby="allotModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -209,9 +213,14 @@
 <!-- 模态框（Modal）end -->
 
 
+
+
+
+
+
 <!-- 模态框（Modal） 领取-->
 
-<div class="modal fade" id="getModal" tabindex="-1" role="dialog" aria-labelledby="getModalLabel" aria-hidden="true">
+<div class="modal fade hide" id="getModal" tabindex="-1" role="dialog" aria-labelledby="getModalLabel" aria-hidden="true">
 
     <div class="modal-dialog" style="  overflow: auto; pointer-events:auto">
 
@@ -270,6 +279,10 @@
 <!-- 模态框（Modal）end -->
 
 
+
+
+
+
 <script type="text/javascript">
     //加载提示隐藏
     $(top.hangge());
@@ -291,9 +304,21 @@
             // striped: true,//是否显示行间隔色
 
             columns: [
-                {
-                    checkbox: true
-                }, {
+                <c:if test="${QX.add == 1 }">
+                {  checkbox: false,
+
+
+
+                    title: '<label><input type="checkbox" class="allcheckbox" /><span class="lbl"></span></label>',
+
+                    formatter: function (value, row, index) {
+                        var htm = '<label><input type="checkbox" name="ids" /><span class="lbl"></span></label>';
+                        return htm;
+                    }
+
+                },
+                </c:if>
+                    {
                     title: '序号',
                     field: '',
                     align: 'center',
@@ -675,6 +700,134 @@
             diag.close();
         };
         diag.show();
+    }
+
+
+
+
+
+
+    //批量分配
+    function batchallot(){
+
+         bootbox.prompt({
+            title: "确认批量分配所选客户?",
+             message: "请选择分配客服：",
+            inputType: 'select',
+            inputOptions: [
+                {
+                    text: '邹霞',
+                    value: '邹霞',
+                },
+                {
+                    text: '刘崇敏',
+                    value: '刘崇敏',
+                },
+                {
+                    text: '唐荣',
+                    value: '唐荣',
+                },
+                {
+                    text: '段晓芳',
+                    value: '段晓芳',
+                },
+                {
+                    text: '陆慧敏',
+                    value: '陆慧敏',
+                }
+            ],
+            buttons: {
+
+                confirm: {
+                    label: '分配',
+                    className: 'btn-success'
+                },
+                cancel: {
+                    label: '关闭',
+                    className: 'btn-danger'
+                }
+            },
+            callback: function (result) {
+
+
+
+
+                    if (result) {
+
+
+
+
+                        var str = '';
+
+                        for (var i = 0; i < document.getElementsByName('ids').length; i++) {
+
+                            if (document.getElementsByName('ids')[i].checked) {
+
+                                if (str == '') str += $("#dataGrid").bootstrapTable('getData')[i].id + '|' + $("#dataGrid").bootstrapTable('getData')[i].name;
+                                else str += ',' + $("#dataGrid").bootstrapTable('getData')[i].id + '|' + $("#dataGrid").bootstrapTable('getData')[i].name;
+                            }
+                        }
+
+                        if (str == '') {
+                            bootbox.dialog("您没有选择任何客户!",
+                                [
+                                    {
+                                        "label": "关闭",
+                                        "class": "btn-small btn-success",
+                                        "callback": function () {
+
+                                        }
+                                    }
+                                ]
+                            );
+
+
+                            return;
+                        } else {
+
+
+                            var id = str;
+                            var emp = result;
+
+                            var type = 0;
+                            $.ajax({
+                                type: "get",
+                                url: "gh/allotall",
+                                data: {
+                                    "id": id,
+                                    "emp": emp,
+                                    "type": type,
+
+                                },
+                                dataType: 'json',
+                                //beforeSend: validateData,
+                                cache: false,
+                                success: function (res) {
+                                    alert(JSON.parse(JSON.stringify(res)).responseText);
+                                },
+                                //现在所有都走error
+                                error: function (err) {
+                                    alert(JSON.parse(JSON.stringify(err)).responseText);
+                                }
+                            });
+
+
+
+
+                            //刷新表 留在在当前页
+                            var page = $("#dataTable").bootstrapTable("getOptions").pageNumber;
+                            $('#dataGrid').bootstrapTable('refreshOptions', {pageNumber: page});
+
+                        }
+
+
+
+
+
+
+                    }
+                }
+        });
     }
 
 </script>

@@ -55,6 +55,47 @@
 				<iframe name="mainFrame" id="mainFrame" frameborder="0" src="tab.do" style="margin:0 auto;width:100%;height:100%;"></iframe>
 			</div>
 
+
+
+
+			<!-- 模态框（Modal） 公海-->
+
+			<div class="modal fade hide" id="ghModal" tabindex="-1" role="dialog" aria-labelledby="getModalLabel" aria-hidden="true"  style="width:900px">
+
+				<div class="modal-dialog" style="  overflow: auto; pointer-events:auto">
+
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+							<h4 class="modal-title" id="getModalLabel"></h4>
+						</div>
+						<div class="modal-body" >
+
+
+
+							<div id="table-responsive-width"  >
+								<table   id="ghdataGrid">
+								</table>
+							</div>
+
+
+
+
+						</div>
+
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+
+						</div>
+
+
+					</div>
+					<!-- /.modal-content -->
+				</div>
+				<!-- /.modal -->
+			</div>
+			<!-- 模态框（Modal）end -->
+
 			<!-- 换肤 -->
 			<div id="ace-settings-container">
 				<div class="btn btn-app btn-mini btn-warning" id="ace-settings-btn">
@@ -80,6 +121,18 @@
 						<label><input type='checkbox' name='menusf' id="menusf"
 							onclick="menusf();" /><span class="lbl" style="padding-top: 5px;">菜单缩放</span></label>
 					</div>
+
+
+					<div>
+
+					</div>
+
+					<div>
+						<label><button   type='button' name='menugh' id="menugh"   data-toggle="modal"  data-target="#ghModal"
+									  ><span class="lbl" style="padding-top: 5px;">公海日志</span></button></label>
+					</div>
+
+
 				</div>
 			</div>
 			<!--/#ace-settings-container-->
@@ -101,5 +154,136 @@
 		
 		<!--引入属于此页面的js -->
 		<script type="text/javascript" src="static/js/myjs/index.js"></script>
+
+
+
+
+	<script type="text/javascript">
+
+
+
+
+		$(function () {
+
+
+			$('#ghdataGrid').bootstrapTable({
+				method: "POST",
+				//极为重要，缺失无法执行queryParams，传递page参数
+				contentType: "application/x-www-form-urlencoded",
+				dataType: "json",
+				singleSelect: true,//单行选择单行,设置为true将禁止多选
+				clickToSelect: true,//点击行时自动选择
+				// striped: true,//是否显示行间隔色
+
+				columns: [
+					 {
+						title: '序号',
+						field: '',
+						align: 'center',
+						formatter: function (value, row, index) {
+							var pageSize = $('#ghdataGrid').bootstrapTable('getOptions').pageSize;     //通过table的#id 得到每页多少条
+							var pageNumber = $('#ghdataGrid').bootstrapTable('getOptions').pageNumber; //通过table的#id 得到当前第几页
+							return pageSize * (pageNumber - 1) + index + 1;    // 返回每条的序号： 每页条数 *（当前页 - 1 ）+ 序号
+						}
+					},
+
+				  {
+						field: 'name',
+						title: '客户名称',
+
+					}
+					,  {
+						field: 'his_tag',
+						title: '历史最高标签',
+
+					}
+					, {
+						field: 'now_tag',
+						title: '本月标签',
+
+					}
+					, {
+						field: 'end_order_rq',
+						title: '末单日期',
+
+					}
+					,  {
+						field: 'emp',
+						title: '归属客服',
+
+					}
+					,  {
+						field: 'gh_isvalid',
+						title: '公海状态',
+
+					}
+					,
+
+					{
+						field: 'end_date',
+						title: '领取时间',
+
+					}
+					,
+
+					{
+						field: 'emp1',
+						title: '领取客服',
+
+					}
+
+
+				],
+
+
+				// search : true,//搜索
+				//showToggle:true,
+				//showRefresh: true,
+				locale: 'zh-CN',//中文支持
+				//页面需要展示的列，后端交互对象的属性
+				pagination: true,  //开启分页
+				sidePagination: 'server',
+				pageNumber: 1,//默认加载页
+				pageSize: 10,//每页数据
+				// pageList: [5,10,15,20],//可选的每页数据
+
+
+				url: 'gh/logdata', //服务器数据的加载地址
+				queryParams: queryParam,
+				responseHandler: function (res) {
+					console.log(JSON.stringify(res.rows));
+					return {                            //return bootstrap-table能处理的数据格式
+						"total": res.total,
+						"rows": res.rows
+					}
+
+
+				}
+			});
+
+			function queryParam(params) {
+
+				var param = {
+					limit: this.limit, // 页面大小
+					offset: this.offset, // 页码
+					pageNumber: this.pageNumber,
+					pageSize: this.pageSize,
+
+
+
+				};
+
+				return param;
+			}
+
+
+
+
+		});
+
+
+
+	</script>
+
 </body>
 </html>
